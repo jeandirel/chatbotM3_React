@@ -1,0 +1,270 @@
+.
+├── ./arborescence.txt
+├── ./CLE.txt
+├── ./database
+│   └── ./database/interactions.db
+├── ./.env
+├── ./.git
+│   ├── ./.git/branches
+│   ├── ./.git/config
+│   ├── ./.git/description
+│   ├── ./.git/HEAD
+│   ├── ./.git/hooks
+│   │   ├── ./.git/hooks/applypatch-msg.sample
+│   │   ├── ./.git/hooks/commit-msg.sample
+│   │   ├── ./.git/hooks/fsmonitor-watchman.sample
+│   │   ├── ./.git/hooks/post-update.sample
+│   │   ├── ./.git/hooks/pre-applypatch.sample
+│   │   ├── ./.git/hooks/pre-commit.sample
+│   │   ├── ./.git/hooks/pre-merge-commit.sample
+│   │   ├── ./.git/hooks/prepare-commit-msg.sample
+│   │   ├── ./.git/hooks/pre-push.sample
+│   │   ├── ./.git/hooks/pre-rebase.sample
+│   │   ├── ./.git/hooks/pre-receive.sample
+│   │   ├── ./.git/hooks/push-to-checkout.sample
+│   │   ├── ./.git/hooks/sendemail-validate.sample
+│   │   └── ./.git/hooks/update.sample
+│   ├── ./.git/index
+│   ├── ./.git/info
+│   │   └── ./.git/info/exclude
+│   ├── ./.git/logs
+│   │   ├── ./.git/logs/HEAD
+│   │   └── ./.git/logs/refs
+│   │       ├── ./.git/logs/refs/heads
+│   │       │   └── ./.git/logs/refs/heads/main
+│   │       └── ./.git/logs/refs/remotes
+│   │           └── ./.git/logs/refs/remotes/origin
+│   │               └── ./.git/logs/refs/remotes/origin/HEAD
+│   ├── ./.git/objects
+│   │   ├── ./.git/objects/info
+│   │   └── ./.git/objects/pack
+│   │       ├── ./.git/objects/pack/pack-115d551a3722e5000097d627220ca02381eaa3bf.idx
+│   │       ├── ./.git/objects/pack/pack-115d551a3722e5000097d627220ca02381eaa3bf.pack
+│   │       └── ./.git/objects/pack/pack-115d551a3722e5000097d627220ca02381eaa3bf.rev
+│   ├── ./.git/packed-refs
+│   └── ./.git/refs
+│       ├── ./.git/refs/heads
+│       │   └── ./.git/refs/heads/main
+│       ├── ./.git/refs/remotes
+│       │   └── ./.git/refs/remotes/origin
+│       │       └── ./.git/refs/remotes/origin/HEAD
+│       └── ./.git/refs/tags
+├── ./.gitignore
+├── ./indexer.py
+├── ./inputs
+│   └── ./inputs/Oxypharm
+│       ├── ./inputs/Oxypharm/ModOP_Géolocalisation
+│       │   ├── ./inputs/Oxypharm/ModOP_Géolocalisation/ECO-CONDUITE OXYPHARM.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Géolocalisation/GEOLOC-Avec RGPD.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Géolocalisation/GEOLOC installation module.pdf
+│       │   └── ./inputs/Oxypharm/ModOP_Géolocalisation/Process de controle de fonctionnement du module de géolocalisation.pdf
+│       ├── ./inputs/Oxypharm/ModOP_M3
+│       │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Annuler un echange ou redescendre un OD RTO en 22.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Création des horaires.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/CUR.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Debloquer un OD au statut 33.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Disponibilite.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/edition materiel.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/feuille de route.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Immobilisation d'un article.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/impression etiquette IMMO.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Info manquante Statut préventive Option 33.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Information fiche client CRS610.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Intervention preventives.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Inventaire des locations d'une officine.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Liste des emplacements pour le flashage.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Maintenance parc locatif.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Modification dates de contrats et contrats Sav.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Monter de 44 a 99 LVO.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Oxygene.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Parametrage des heures non exploitees.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Planning.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Prise de rendez vous.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Recherche des perdus.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Réimpression d'un OD au statut 44.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/reintegre stock.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Retourner les bouteilles d'O2 vides a la Cerp.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/RTO de 44 à 99.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Supprimer un contrat SAV.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/TOO envoi.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/TOO reception.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/TOR.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Tracabilite O2 Air Liquide.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Tracabilite O2 AirProducts.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Tracabilite O2 SolFrance.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Transaction SRO appareils a detruire.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Transfert de materiel.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/TRO.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/t.txt
+│       │   │   └── ./inputs/Oxypharm/ModOP_M3/EXPLOITATION/Visualisation du statut d'un appareil.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3/SAV
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/SAV/Article gere en stock.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/SAV/Article non gere en stock.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/SAV/Creation fiche itv.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/SAV/Saisir devis appareil gere et non gere.pdf
+│       │   │   ├── ./inputs/Oxypharm/ModOP_M3/SAV/Saisir transformation devis atelier.pdf
+│       │   │   └── ./inputs/Oxypharm/ModOP_M3/SAV/Transformer CUR ATE DEVIS.pdf
+│       │   └── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Aspirateur trachéal et ses sondes.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/ASTEN.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Audit 360.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Avoir location.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Avoirs cde WEB.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Cession officine.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Cloture contrat entier.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Cloture une ligne contrat.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Creation patient.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Déménagement contrat.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Devis en contrat actif.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Devis vente ou location.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/DIR.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Echange appareil en location.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Envoi devis en PDF.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Fact en attente.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Gestion et suivi audit 360°.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Information fiche client CRS610.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Modification de la degressivite d'une location.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Modifier code client.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Nomenclatures.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Parametrage d'affichage.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/PCMAD et catalogues via M3.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Saisie commande agences déportées.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Saisie contrat information A FACTURER.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Saisir un avoir.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Saisir un contrat.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/susprendre et reprendre contrat location.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Tarif.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Tarifs recherche.pdf
+│       │       ├── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Vente comptoir.pdf
+│       │       └── ./inputs/Oxypharm/ModOP_M3/SERVICE CLIENT/Vente residuelle.pdf
+│       ├── ./inputs/Oxypharm/ModOP_M3_Max
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Avoir.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création de tarif OIS017.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création Fournisseur_M3MAX.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création Fournisseur_M3MAX.pptx
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création groupement clients.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Creation inventaire.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création Retour client.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création Retour client_PLT_M3MAX.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création Retour client_PLT_M3MAX.pptx
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Création Retour client.pptx
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Devis de commande vente QPS100.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Edition facture pour export.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Edition facture pour export.pptx
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Facturation commande vente.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Historique trans - MWS070.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Litige manquant transporteur.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Offre de prix client M3max.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Offre de prix.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Prepa commande.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/reception des cdes PLT.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Reedition de devis.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Reedition de facture.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Saisie de commande vente EXPORT OIS100.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Saisie de commande vente OIS100.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Simulation de prix.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Stock MWS060.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Tarif par quantité M3max.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/Transformation devis en contrat.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_M3_Max/t.txt
+│       │   └── ./inputs/Oxypharm/ModOP_M3_Max/Visu tarif achat.pdf
+│       ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Arrêt locations PDA.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Connexion et fonctionnalité d'un PDA.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Interrogation du stock.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Prepa de cde.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Tracabilite O2.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transfert d'emplacement.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transferts inter dépot ESC.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transferts inter dépot SBV.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transferts inter dépot SRO.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transferts inter dépot TOO.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transferts inter dépot TOR.pdf
+│       │   └── ./inputs/Oxypharm/ModOP_Mobilité-PDA/Transferts inter dépot TRO.pdf
+│       ├── ./inputs/Oxypharm/ModOP_MSU
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Appairage bague MSU.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Litige reception.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Preparation agence.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Preparation commande CDV.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Rangement.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Reception.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MSU/Transfert emplacement.pdf
+│       │   └── ./inputs/Oxypharm/ModOP_MSU/Visualisation du stock.pdf
+│       ├── ./inputs/Oxypharm/ModOP_MVS
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Annulation d'une commande.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Annulation d'une reception transporteur.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Commande IFRN.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Creation d'un bon blanc.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Forcer l'entrée en stock suite réception RCPA.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Litige RCPA.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Programmation douchette.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_MVS/Reception cde.pdf
+│       │   └── ./inputs/Oxypharm/ModOP_MVS/Reliquat.pdf
+│       ├── ./inputs/Oxypharm/ModOP_NPI_AS400
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Alerte suite erreur MVS.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Annuler ligne de commande.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/BMS.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Commande en attente NPI.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Commande previsionnelle.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/DICO (mouvements de stocks dans NPI)-1.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Gestion des avoirs commerciaux.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Inventaire permanent.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/liste des commandes.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Modifier decoupage physique.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Modifier les tournées.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Prépa cmde.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/recherche avoir.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Recherche de produit par le nom.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Recherche emplacement par code article.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Saisir commande.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Saisir un retour sur NPI.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Sortie produit périmé.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Sous flux.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Synthèse client.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Tracabilite par lot bis.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Tracabilite par lot.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Validation OP.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_NPI_AS400/Visualisation des dernieres entrees stock.pdf
+│       │   └── ./inputs/Oxypharm/ModOP_NPI_AS400/Visu decoupage physique.pdf
+│       ├── ./inputs/Oxypharm/ModOP_Oxygene_CERP
+│       │   └── ./inputs/Oxypharm/ModOP_Oxygene_CERP/Oxygene CERP.pdf
+│       ├── ./inputs/Oxypharm/ModOP_SME
+│       │   ├── ./inputs/Oxypharm/ModOP_SME/connexion deconnexion au SME.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_SME/Forcer deconnexion user SME.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_SME/Impression étiquette SME.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_SME/MEMO.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_SME/présentation planning SME.pdf
+│       │   ├── ./inputs/Oxypharm/ModOP_SME/Type de mission.jpg
+│       │   └── ./inputs/Oxypharm/ModOP_SME/Type de prepa.jpg
+│       └── ./inputs/Oxypharm/PulseSante
+│           ├── ./inputs/Oxypharm/PulseSante/MOD OP PULSE installation.pdf
+│           ├── ./inputs/Oxypharm/PulseSante/MOD OP PULSE nutriconnect.pdf
+│           ├── ./inputs/Oxypharm/PulseSante/MOD OP PULSE parametrage phie .pdf
+│           ├── ./inputs/Oxypharm/PulseSante/MOD OP PULSE renouv ordo.pdf
+│           └── ./inputs/Oxypharm/PulseSante/MOD OP PULSE visite de suivi.pdf
+├── ./keyword_generate.py
+├── ./MistralChat.py
+├── ./mots_globaux.json
+├── ./mots_globaux.txt
+├── ./pages
+│   └── ./pages/1_Feedback_Viewer.py
+├── ./requirements.txt
+├── ./resultats_extraction.txt
+├── ./utils
+│   ├── ./utils/config.py
+│   ├── ./utils/database.py
+│   ├── ./utils/data_loader.py
+│   ├── ./utils/__pycache__
+│   │   ├── ./utils/__pycache__/config.cpython-39.pyc
+│   │   ├── ./utils/__pycache__/database.cpython-39.pyc
+│   │   ├── ./utils/__pycache__/data_loader.cpython-39.pyc
+│   │   ├── ./utils/__pycache__/query_classifier.cpython-39.pyc
+│   │   └── ./utils/__pycache__/vector_store.cpython-39.pyc
+│   ├── ./utils/query_classifier.py
+│   └── ./utils/vector_store.py
+└── ./vector_db
+    ├── ./vector_db/document_chunks.pkl
+    └── ./vector_db/faiss_index.idx
+
+37 directories, 230 files

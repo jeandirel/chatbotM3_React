@@ -1,0 +1,37 @@
+# .dockerignore
+.git
+.vscode
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Environnements/venv
+.venv/
+env/
+venv/
+
+# Données locales & artefacts lourds
+inputs/
+data/
+datasets/
+models/
+checkpoints/
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.pdf
+*.docx
+*.pptx
+*.zip
+*.tar*
+*.gz
+
+# Secrets locaux
+.env
+
+#certificats
+/app/PocChatbotM3/certs/*
+/app/PocChatbotM3/secure/*

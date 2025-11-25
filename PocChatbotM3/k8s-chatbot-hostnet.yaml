@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chatbot
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+  namespace: chatbot
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 5Gi } }
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vectordb-pvc
+  namespace: chatbot
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 10Gi } }
+  storageClassName: local-path
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatbot
+  namespace: chatbot
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: chatbot } }
+  template:
+    metadata: { labels: { app: chatbot } }
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+        - name: acr-pull-secret
+      containers:
+        - name: chatbot
+          image: acrchatbotm3.azurecr.io/chatbot-poc:v1
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8501 }]
+          env:
+            - { name: STREAMLIT_SERVER_PORT, value: "8501" }
+            - { name: STREAMLIT_SERVER_ADDRESS, value: "0.0.0.0" }
+            - { name: CHROMA_PATH, value: "/app/vector_db" }
+            - { name: DATABASE_PATH, value: "/app/database" }
+            - name: MISTRAL_API_KEY
+              valueFrom:
+                secretKeyRef: { name: chatbot-secrets, key: MISTRAL_API_KEY }
+          volumeMounts:
+            - { name: db-vol,       mountPath: /app/database }
+            - { name: vectordb-vol, mountPath: /app/vector_db }
+          readinessProbe:
+            httpGet: { path: "/", port: 8501 }
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet: { path: "/", port: 8501 }
+            initialDelaySeconds: 30
+      volumes:
+        - name: db-vol
+          persistentVolumeClaim: { claimName: db-pvc }
+        - name: vectordb-vol
+          persistentVolumeClaim: { claimName: vectordb-pvc }

@@ -1,0 +1,29 @@
+services:
+  chatbot:
+    image: chatbot-poc:latest #acrchatbotm3.azurecr.io/chatbot-poc:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chatbot
+    env_file:
+      - .env
+    expose:
+      - "8501"   # expose au réseau interne Docker, pas à l'extérieur
+    volumes:
+      - ./database:/app/database:Z
+      - ./vector_db:/app/vector_db:Z
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx_chatbot
+    depends_on:
+      - chatbot
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:Z
+    restart: unless-stopped

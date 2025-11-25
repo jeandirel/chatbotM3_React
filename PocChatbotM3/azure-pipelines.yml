@@ -1,0 +1,119 @@
+trigger:
+  branches:
+    include:
+      - main
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  # Container registry / image metadata
+  ACR_LOGIN_SERVER: 'acrchatbotm3.azurecr.io'
+  IMAGE_REPOSITORY: 'chatbot-poc'
+  K8S_NAMESPACE: 'chatbot'
+  K8S_MANIFEST_PATH: 'k8s-chatbot-hostnet.yaml'
+
+stages:
+  - stage: Build
+    displayName: Build & Push
+    jobs:
+      - job: Build
+        displayName: Build container image
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: UsePythonVersion@0
+            displayName: Set up Python 3.11
+            inputs:
+              versionSpec: '3.11'
+              addToPath: true
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+              python -m compileall .
+            displayName: Install dependencies & smoke test
+
+          - script: |
+              SANITIZED_BRANCH=$(echo "$(Build.SourceBranchName)" | tr '[:upper:]' '[:lower:]' | tr '/' '-')
+              IMAGE_TAG="${SANITIZED_BRANCH}-$(Build.BuildId)"
+              echo "##vso[task.setvariable variable=IMAGE_TAG;isOutput=true]${IMAGE_TAG}"
+              echo "##vso[task.setvariable variable=IMAGE_FULL]$(ACR_LOGIN_SERVER)/$(IMAGE_REPOSITORY):${IMAGE_TAG}"
+            displayName: Derive image tag
+            name: SetImageTag
+
+          - script: |
+              az login --service-principal \
+                --username "$(AZURE_SP_APP_ID)" \
+                --password "$(AZURE_SP_PASSWORD)" \
+                --tenant "$(AZURE_SP_TENANT_ID)"
+              az acr login --name $(ACR_LOGIN_SERVER)
+            displayName: Azure CLI login
+
+          - script: |
+              docker build -t $(IMAGE_FULL) .
+              docker push $(IMAGE_FULL)
+            displayName: Build and push image
+
+          - task: CopyFiles@2
+            displayName: Stage manifests
+            inputs:
+              contents: $(K8S_MANIFEST_PATH)
+              targetFolder: $(Build.ArtifactStagingDirectory)
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish manifests artifact
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: manifests
+
+  - stage: Deploy
+    displayName: Deploy to Kubernetes
+    dependsOn: Build
+    condition: succeeded()
+    variables:
+      IMAGE_TAG: $[ stageDependencies.Build.Build.outputs['Build.SetImageTag.IMAGE_TAG'] ]
+    jobs:
+      - deployment: Deploy
+        displayName: Apply manifests
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  displayName: Download manifests artifact
+                  artifact: manifests
+
+                - task: DownloadSecureFile@1
+                  name: kubeConfig
+                  displayName: Download kubeconfig
+                  inputs:
+                    secureFile: chatbot-kubeconfig
+
+                - script: |
+                    export KUBECONFIG=$(Agent.TempDirectory)/$(kubeConfig.secureFilePath)
+                    az login --service-principal \
+                      --username "$(AZURE_SP_APP_ID)" \
+                      --password "$(AZURE_SP_PASSWORD)" \
+                      --tenant "$(AZURE_SP_TENANT_ID)"
+                    ACR_USERNAME=$(az acr credential show --name $(ACR_LOGIN_SERVER) --query "username" -o tsv)
+                    ACR_PASSWORD=$(az acr credential show --name $(ACR_LOGIN_SERVER) --query "passwords[0].value" -o tsv)
+                    kubectl create namespace $(K8S_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
+                    kubectl create secret docker-registry acr-pull-secret \
+                      --namespace $(K8S_NAMESPACE) \
+                      --docker-server=$(ACR_LOGIN_SERVER) \
+                      --docker-username="${ACR_USERNAME}" \
+                      --docker-password="${ACR_PASSWORD}" \
+                      --dry-run=client -o yaml | kubectl apply -f -
+                    kubectl create secret generic chatbot-secrets \
+                      --namespace $(K8S_NAMESPACE) \
+                      --from-literal=MISTRAL_API_KEY="$(MISTRAL_API_KEY)" \
+                      --dry-run=client -o yaml | kubectl apply -f -
+                    kubectl apply -n $(K8S_NAMESPACE) -f $(Pipeline.Workspace)/manifests/$(K8S_MANIFEST_PATH)
+                    kubectl set image deployment/chatbot chatbot=$(ACR_LOGIN_SERVER)/$(IMAGE_REPOSITORY):$(IMAGE_TAG) -n $(K8S_NAMESPACE)
+                    kubectl rollout status deployment/chatbot -n $(K8S_NAMESPACE)
+                  displayName: Apply manifests
