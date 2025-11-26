@@ -1,0 +1,8 @@
+cannot import name 'decode_access_token' from 'utils.auth' (C:\Users\jenzek\Downloads\chat-interface\PocChatbotM3\utils\auth.py)Traceback (most recent call last):
+  File "C:\Users\jenzek\Downloads\chat-interface\PocChatbotM3\verify_modules.py", line 23, in verify_modules
+    from modules.auth import AuthService
+  File "C:\Users\jenzek\Downloads\chat-interface\PocChatbotM3\modules\auth.py", line 6, in <module>
+    from utils.auth import (
+    ...<5 lines>...
+    )
+ImportError: cannot import name 'decode_access_token' from 'utils.auth' (C:\Users\jenzek\Downloads\chat-interface\PocChatbotM3\utils\auth.py)

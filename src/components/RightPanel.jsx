@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight, FileText, Settings, Filter, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PdfModal from './PdfModal';
+import FaqModal from './FaqModal';
+import { faqService } from '../services/faqService';
 
-export default function RightPanel({ sources = [] }) {
+export default function RightPanel({ sources = [], onFaqClick }) {
     const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
     const [selectedPdf, setSelectedPdf] = useState(null);
+    const [faqs, setFaqs] = useState([]);
+
+    useEffect(() => {
+        const loadFaqs = async () => {
+            try {
+                const data = await faqService.getFaqs();
+                setFaqs(data);
+            } catch (error) {
+                console.error("Error loading FAQs:", error);
+            }
+        };
+        loadFaqs();
+    }, []);
 
     // Extract unique PDF files from sources
     const uniquePdfs = React.useMemo(() => {
@@ -31,6 +47,10 @@ export default function RightPanel({ sources = [] }) {
         setIsModalOpen(true);
     };
 
+    const handleFaqClick = (question) => {
+        if (onFaqClick) onFaqClick(question);
+    };
+
     return (
         <div className="right-panel">
             <div className="panel-card">
@@ -38,11 +58,20 @@ export default function RightPanel({ sources = [] }) {
                     <h3>Questions fréquemment posées</h3>
                     <ChevronRight size={16} />
                 </div>
-                <a href="#" className="see-all">voir toutes</a>
+                <button
+                    onClick={() => setIsFaqModalOpen(true)}
+                    className="see-all"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', fontFamily: 'inherit' }}
+                >
+                    voir toutes
+                </button>
                 <div className="faq-list">
-                    <button className="faq-item">Consulter un document</button>
-                    <button className="faq-item">Envoyer un document</button>
-                    <button className="faq-item">Sécurité des données</button>
+                    {faqs.slice(0, 3).map((faq, index) => (
+                        <button key={index} className="faq-item" onClick={() => handleFaqClick(faq.question)}>
+                            {faq.question}
+                        </button>
+                    ))}
+                    {faqs.length === 0 && <div style={{ fontSize: '0.8rem', color: '#6B7280', fontStyle: 'italic' }}>Chargement...</div>}
                 </div>
             </div>
 
@@ -103,6 +132,13 @@ export default function RightPanel({ sources = [] }) {
                     title={selectedPdf.name}
                 />
             )}
+
+            <FaqModal
+                isOpen={isFaqModalOpen}
+                onClose={() => setIsFaqModalOpen(false)}
+                onQuestionClick={handleFaqClick}
+                faqs={faqs}
+            />
 
             <style>{`
                 .view-pdf-btn {

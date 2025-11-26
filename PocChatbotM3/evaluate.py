@@ -1,15 +1,18 @@
 # evaluate.py
 import pandas as pd
 import logging
-from utils.database import get_all_interactions
+from modules.session import SessionService
 from utils.config import COMMUNE_NAME
 from datetime import datetime, timedelta
+
+# Initialize SessionService
+session_service = SessionService()
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_data_for_evaluation(limit: int = 500) -> pd.DataFrame:
     """Charge toutes les interactions nécessaires depuis la base de données."""
-    interactions = get_all_interactions(limit=limit)
+    interactions = session_service.get_all_interactions(limit=limit)
     if not interactions:
         logging.warning("Aucune interaction trouvée dans la base de données.")
         return pd.DataFrame()

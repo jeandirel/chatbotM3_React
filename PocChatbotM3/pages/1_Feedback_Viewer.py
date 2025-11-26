@@ -743,7 +743,9 @@ ADMIN_PASSWORD = os.environ.get("FEEDBACK_ADMIN_PASSWORD", "Admin1728")
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Maintenant, nous pouvons importer les modules du dossier parent
-from utils.database import get_all_interactions, update_feedback
+# from utils.database import get_all_interactions, update_feedback # REMOVED
+from modules.session import SessionService # ADDED
+session_service = SessionService() # ADDED
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -1163,7 +1165,7 @@ def load_data(limit=200):
     Charge les données depuis la base avec gestion multi-utilisateurs.
     """
     logging.info(f"Chargement des {limit} dernières interactions depuis la base de données...")
-    interactions_list = get_all_interactions(limit=limit)
+    interactions_list = session_service.get_all_interactions(limit=limit)
     
     if not interactions_list:
         return pd.DataFrame(), pd.DataFrame()
@@ -1661,7 +1663,7 @@ try:
 
                     comment_to_save = comment_input.strip() or None
 
-                    if update_feedback(selected_id, feedback_text, comment_to_save, feedback_value):
+                    if session_service.update_feedback(selected_id, feedback_text, comment_to_save, feedback_value):
                         st.success("Feedback enregistre avec succes.")
                         st.cache_data.clear()
                         st.rerun()

@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Mic, Plus, ThumbsUp, ThumbsDown, Copy, Share2, RefreshCw, User, Sparkles } from 'lucide-react';
+import { Send, Mic, Plus, ThumbsUp, ThumbsDown, Copy, Share2, RefreshCw, User, Sparkles, Check, FileText } from 'lucide-react';
 import { chatService } from '../services/chatService';
+import FeedbackModal from './FeedbackModal';
+import ReactMarkdown from 'react-markdown';
 
-export default function ChatArea({ conversationId, onResponse, onConversationCreated }) {
+export default function ChatArea({ conversationId, onResponse, onConversationCreated, prefilledMessage, onMessageSent }) {
     const [messages, setMessages] = useState([
         {
             id: 'init',
@@ -14,6 +16,9 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState(null);
+    const [copiedId, setCopiedId] = useState(null);
+    const [feedbackInput, setFeedbackInput] = useState(null);
+    const [isListening, setIsListening] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -23,6 +28,12 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    useEffect(() => {
+        if (prefilledMessage) {
+            setInputValue(prefilledMessage);
+        }
+    }, [prefilledMessage]);
 
     useEffect(() => {
         if (conversationId) {
@@ -44,11 +55,8 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
         setIsLoading(true);
         try {
             const msgs = await chatService.getConversationMessages(id);
-            // Transform messages if needed or ensure backend returns compatible format
-            // Backend returns: [{role, content, id, ...}, ...]
             setMessages(msgs);
 
-            // If last message has sources, update parent
             const lastMsg = msgs[msgs.length - 1];
             if (lastMsg && lastMsg.role === 'assistant' && lastMsg.sources && onResponse) {
                 onResponse(lastMsg.sources);
@@ -83,7 +91,6 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
             onResponse(data.sources);
         }
 
-        // Notify parent if new conversation was created
         if (data.conversation_id && data.conversation_id !== conversationId) {
             if (onConversationCreated) {
                 onConversationCreated(data.conversation_id);
@@ -96,8 +103,8 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
 
         const userMessageText = inputValue;
         setInputValue('');
+        if (onMessageSent) onMessageSent();
 
-        // Add user message
         const userMessage = {
             id: Date.now().toString(),
             role: 'user',
@@ -108,9 +115,6 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
         setIsLoading(true);
 
         try {
-            // Prepare history (excluding the just added message)
-            // Filter out init message if it's not relevant, or keep it?
-            // Usually we only send user/assistant messages from history
             const history = messages
                 .filter(m => m.id !== 'init')
                 .map(m => ({ role: m.role, content: m.content }));
@@ -135,19 +139,15 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
     const handleRegenerate = async () => {
         if (isLoading) return;
 
-        // Find last user message
         const lastUserIndex = [...messages].map(m => m.role).lastIndexOf('user');
         if (lastUserIndex === -1) return;
 
         const lastUserMessage = messages[lastUserIndex];
-
-        // Remove messages after the last user message (the bot response we want to replace)
         const newMessages = messages.slice(0, lastUserIndex + 1);
         setMessages(newMessages);
         setIsLoading(true);
 
         try {
-            // History is everything before the last user message
             const history = newMessages
                 .slice(0, lastUserIndex)
                 .filter(m => m.id !== 'init')
@@ -181,33 +181,80 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
                 console.error('Error sharing:', err);
             }
         } else {
-            navigator.clipboard.writeText(text);
-            // Could add a toast here
+            handleCopy(text, null);
         }
     };
 
-    const handleFeedback = async (messageId, interactionId, feedbackType) => {
-        if (!interactionId) return;
+    const handleCopy = (content, id) => {
+        navigator.clipboard.writeText(content);
+        if (id) {
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        }
+    };
+
+    const initiateFeedback = (messageId, interactionId, type) => {
+        setFeedbackInput({ messageId, interactionId, type, comment: '' });
+    };
+
+    const submitFeedback = async (comment) => {
+        if (!feedbackInput) return;
+        const { messageId, interactionId, type } = feedbackInput;
 
         try {
-            await chatService.sendFeedback(interactionId, feedbackType);
+            await chatService.sendFeedback(interactionId, type, comment);
 
-            // Update UI to show feedback state
             setMessages(prev => prev.map(msg => {
                 if (msg.id === messageId) {
-                    return { ...msg, feedback: feedbackType };
+                    return { ...msg, feedback: type, feedbackComment: comment };
                 }
                 return msg;
             }));
+            setFeedbackInput(null);
         } catch (error) {
             console.error("Error sending feedback:", error);
         }
+    };
+
+    const cancelFeedback = () => {
+        setFeedbackInput(null);
     };
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSendMessage();
+        }
+    };
+
+    const toggleListening = () => {
+        if (isListening) {
+            // Stop logic is usually handled by the browser automatically for non-continuous, 
+            // but we can force state update here if needed.
+            setIsListening(false);
+        } else {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'fr-FR';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = () => setIsListening(true);
+                recognition.onend = () => setIsListening(false);
+                recognition.onerror = (event) => {
+                    console.error("Speech recognition error", event.error);
+                    setIsListening(false);
+                };
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    setInputValue(prev => prev + (prev ? ' ' : '') + transcript);
+                };
+
+                recognition.start();
+            } else {
+                alert("Votre navigateur ne supporte pas la reconnaissance vocale.");
+            }
         }
     };
 
@@ -220,49 +267,75 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
                             {msg.role === 'user' ? <User size={20} /> : <Sparkles size={20} />}
                         </div>
                         <div className="message-content">
-                            <div className="text-content" style={{ whiteSpace: 'pre-wrap' }}>
-                                {msg.content}
+                            <div className="text-content">
+                                <ReactMarkdown
+                                    components={{
+                                        strong: ({ node, ...props }) => <span style={{ color: '#F97316', fontWeight: 'bold' }} {...props} />
+                                    }}
+                                >
+                                    {msg.content}
+                                </ReactMarkdown>
                             </div>
 
+                            {msg.role === 'user' && (
+                                <div className="user-message-actions" style={{ marginTop: '5px', display: 'flex', justifyContent: 'flex-end', opacity: 0.7 }}>
+                                    <button
+                                        title="Copier"
+                                        onClick={() => handleCopy(msg.content, msg.id)}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'inherit' }}
+                                    >
+                                        {copiedId === msg.id ? <Check size={12} /> : <Copy size={12} />}
+                                        {copiedId === msg.id && <span style={{ fontSize: '0.7rem', marginLeft: '4px' }}>Copié</span>}
+                                    </button>
+                                </div>
+                            )}
+
                             {msg.sources && msg.sources.length > 0 && (
-                                <div className="sources-section">
-                                    <div className="sources-title">Sources:</div>
-                                    <ul className="sources-list">
-                                        {msg.sources.map((source, idx) => (
-                                            <li key={idx} className="source-item">
-                                                <span className="source-name">
-                                                    {source.metadata?.source || 'Document inconnu'}
-                                                </span>
-                                                {source.metadata?.page && (
-                                                    <span className="source-page"> (Page {source.metadata.page})</span>
-                                                )}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                <div className="sources-notification" style={{
+                                    marginTop: '12px',
+                                    padding: '8px 12px',
+                                    backgroundColor: '#FFF7ED',
+                                    border: '1px solid #FED7AA',
+                                    borderRadius: '8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    fontSize: '0.85rem',
+                                    color: '#9A3412'
+                                }}>
+                                    <FileText size={16} color="#F97316" style={{ flexShrink: 0 }} />
+                                    <span>
+                                        Les documents sources sont disponibles dans la section <strong>Résultats PDF</strong>.
+                                    </span>
                                 </div>
                             )}
 
                             {!msg.isError && msg.role === 'assistant' && (
-                                <div className="message-actions">
-                                    <button
-                                        title="Utile"
-                                        onClick={() => handleFeedback(msg.id, msg.interaction_id, 'positif')}
-                                        className={msg.feedback === 'positif' ? 'active-feedback' : ''}
-                                    >
-                                        <ThumbsUp size={14} />
-                                    </button>
-                                    <button
-                                        title="Pas utile"
-                                        onClick={() => handleFeedback(msg.id, msg.interaction_id, 'negatif')}
-                                        className={msg.feedback === 'negatif' ? 'active-feedback' : ''}
-                                    >
-                                        <ThumbsDown size={14} />
-                                    </button>
-                                    <button title="Copier" onClick={() => navigator.clipboard.writeText(msg.content)}><Copy size={14} /></button>
-                                    <button title="Partager" onClick={() => handleShare(msg.content)}><Share2 size={14} /></button>
-                                    {index === messages.length - 1 && (
-                                        <button title="Régénérer" onClick={handleRegenerate}><RefreshCw size={14} /></button>
-                                    )}
+                                <div className="message-actions-container">
+                                    <div className="message-actions">
+                                        <button
+                                            title="Utile"
+                                            onClick={() => initiateFeedback(msg.id, msg.interaction_id, 'positif')}
+                                            className={msg.feedback === 'positif' ? 'active-feedback' : ''}
+                                        >
+                                            <ThumbsUp size={14} />
+                                        </button>
+                                        <button
+                                            title="Pas utile"
+                                            onClick={() => initiateFeedback(msg.id, msg.interaction_id, 'negatif')}
+                                            className={msg.feedback === 'negatif' ? 'active-feedback' : ''}
+                                        >
+                                            <ThumbsDown size={14} />
+                                        </button>
+                                        <button title="Copier" onClick={() => handleCopy(msg.content, msg.id)}>
+                                            {copiedId === msg.id ? <Check size={14} color="green" /> : <Copy size={14} />}
+                                        </button>
+                                        {copiedId === msg.id && <span className="copy-notification" style={{ fontSize: '0.75rem', color: 'green', marginLeft: '5px' }}>Message copié</span>}
+                                        <button title="Partager" onClick={() => handleShare(msg.content)}><Share2 size={14} /></button>
+                                        {index === messages.length - 1 && (
+                                            <button title="Régénérer" onClick={handleRegenerate}><RefreshCw size={14} /></button>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -284,17 +357,29 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
 
             <div className="chat-input-area">
                 <button className="icon-btn"><Plus size={20} /></button>
-                <div className="input-wrapper">
+                <div className="input-wrapper" style={{ position: 'relative' }}>
+                    {isListening && (
+                        <div className="recording-badge">
+                            <div className="recording-dot"></div>
+                            Enregistrement...
+                        </div>
+                    )}
                     <input
                         type="text"
-                        placeholder="Envoyer un message..."
+                        placeholder={isListening ? "Parlez maintenant..." : "Envoyer un message..."}
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyPress}
                         disabled={isLoading}
                     />
                     <div className="input-actions">
-                        <Mic size={20} className="mic-icon" />
+                        <Mic
+                            size={20}
+                            className={`mic-icon ${isListening ? 'mic-recording' : ''}`}
+                            onClick={toggleListening}
+                            color={isListening ? "#EF4444" : "currentColor"}
+                            style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                        />
                         <button
                             className="send-btn"
                             onClick={handleSendMessage}
@@ -306,6 +391,13 @@ export default function ChatArea({ conversationId, onResponse, onConversationCre
                 </div>
                 <button className="icon-btn info-btn">i</button>
             </div>
+
+            <FeedbackModal
+                isOpen={!!feedbackInput}
+                onClose={cancelFeedback}
+                onSubmit={submitFeedback}
+                type={feedbackInput?.type}
+            />
         </div>
     );
 }

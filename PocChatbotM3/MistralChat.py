@@ -27,7 +27,10 @@ from utils.config import (
     SEARCH_K
 )
 from utils.vector_store import VectorStoreManager
-from utils.database import log_interaction, update_feedback, get_or_create_user_session
+# from utils.database import log_interaction, update_feedback, get_or_create_user_session # REMOVED
+from modules.session import SessionService # ADDED
+session_service = SessionService() # ADDED
+
 from utils.query_classifier import QueryClassifier
 from utils.conversation_history import ConversationHistory, conversation_manager
 from utils.session_manager import compute_session_title, format_elapsed_time, build_preview
@@ -653,7 +656,7 @@ def ensure_user_identity() -> tuple[str, str]:
             except Exception:  # pragma: no cover
                 pass
         try:
-            session_identifier = get_or_create_user_session(normalized)
+            session_identifier = session_service.get_or_create_user_session(normalized)
         except Exception as exc:  # pylint: disable=broad-except
             logging.error("Impossible d'initialiser la session utilisateur '%s': %s", normalized, exc)
             st.error("❌ Erreur lors de l'initialisation de votre session utilisateur. Veuillez réessayer plus tard.")
@@ -832,7 +835,7 @@ def process_query(user_query: str, user_id: str, username: str, conversation_mes
             "user_session_id": user_id,
             "username": username,
         }
-        interaction_id = log_interaction(
+        interaction_id = session_service.log_interaction(
             query=user_query,
             response=friendly,
             sources=[],
@@ -946,7 +949,7 @@ N'inventez pas d'informations sur {commune_name}.
         "llm_model": CHAT_MODEL
     }
     
-    interaction_id = log_interaction(
+    interaction_id = session_service.log_interaction(
         query=user_query,
         response=llm_response,
         sources=sources_for_log,
@@ -1137,7 +1140,7 @@ def handle_user_feedback():
                 feedback_emoji = ("👍" if normalized_score == "positive" else "👎" if normalized_score == "negative" else "N/A")
                 comment = feedback.get("text", None)
 
-                success = update_feedback(
+                success = session_service.update_feedback(
                     current_interaction_id, feedback_text, comment, feedback_value
                 )
                 if success:

@@ -20,9 +20,9 @@ const ProtectedRoute = ({ children, requireAdmin }) => {
     return children;
 };
 
-function ChatLayout() {
+function ChatLayout({ currentConversationId, setCurrentConversationId }) {
     const [currentSources, setCurrentSources] = React.useState([]);
-    const [currentConversationId, setCurrentConversationId] = React.useState(null);
+    const [prefilledMessage, setPrefilledMessage] = React.useState("");
 
     return (
         <div className="app-container">
@@ -36,14 +36,21 @@ function ChatLayout() {
                     conversationId={currentConversationId}
                     onResponse={(sources) => setCurrentSources(sources)}
                     onConversationCreated={(newId) => setCurrentConversationId(newId)}
+                    prefilledMessage={prefilledMessage}
+                    onMessageSent={() => setPrefilledMessage("")}
                 />
-                <RightPanel sources={currentSources} />
+                <RightPanel
+                    sources={currentSources}
+                    onFaqClick={(msg) => setPrefilledMessage(msg)}
+                />
             </main>
         </div>
     );
 }
 
 function App() {
+    const [currentConversationId, setCurrentConversationId] = React.useState(null);
+
     return (
         <AuthProvider>
             <Router>
@@ -52,7 +59,10 @@ function App() {
 
                     <Route path="/" element={
                         <ProtectedRoute>
-                            <ChatLayout />
+                            <ChatLayout
+                                currentConversationId={currentConversationId}
+                                setCurrentConversationId={setCurrentConversationId}
+                            />
                         </ProtectedRoute>
                     } />
 
@@ -64,9 +74,11 @@ function App() {
 
                     <Route path="/feedback" element={
                         <ProtectedRoute requireAdmin>
-                            <div className="app-container" style={{ display: 'block', height: 'auto', minHeight: '100vh', overflow: 'auto' }}>
+                            <div className="app-container" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
                                 <Header />
-                                <FeedbackPage />
+                                <div style={{ flex: 1, overflowY: 'auto' }}>
+                                    <FeedbackPage />
+                                </div>
                             </div>
                         </ProtectedRoute>
                     } />

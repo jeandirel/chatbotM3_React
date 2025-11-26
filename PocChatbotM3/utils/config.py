@@ -1,3 +1,4 @@
+
 # utils/config.py
 import os
 from dotenv import load_dotenv
@@ -16,10 +17,13 @@ if not MISTRAL_API_KEY:
 EMBEDDING_MODEL = "mistral-embed"
 CHAT_MODEL = "mistral-small-latest" # Ou un autre modèle comme mistral-large-latest
 
+# --- Chemin de base absolu (Racine du projet PocChatbotM3) ---
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # --- Configuration de l'Indexation ---
 # INPUT_DATA_URL = os.getenv("INPUT_DATA_URL") # Décommentez si vous utilisez une URL
-INPUT_DIR = "inputs"                # Dossier pour les données sources après extraction
-VECTOR_DB_DIR = "vector_db"         # Dossier pour stocker l'index Faiss et les chunks
+INPUT_DIR = os.path.join(BASE_DIR, "inputs")                # Dossier pour les données sources après extraction
+VECTOR_DB_DIR = os.path.join(BASE_DIR, "vector_db")         # Dossier pour stocker l'index Faiss et les chunks
 FAISS_INDEX_FILE = os.path.join(VECTOR_DB_DIR, "faiss_index.idx")
 DOCUMENT_CHUNKS_FILE = os.path.join(VECTOR_DB_DIR, "document_chunks.pkl")
 
@@ -31,7 +35,7 @@ EMBEDDING_BATCH_SIZE = 32           # Taille des lots pour l'API d'embedding
 SEARCH_K = 5                        # Nombre de documents à récupérer par défaut
 
 # --- Configuration de la Base de Données ---
-RUNTIME_DATA_DIR = os.getenv("CHATBOT_RUNTIME_DIR", "runtime_data")
+RUNTIME_DATA_DIR = os.getenv("CHATBOT_RUNTIME_DIR", os.path.join(BASE_DIR, "runtime_data"))
 DATABASE_DIR = os.path.join(RUNTIME_DATA_DIR, "database")
 DATABASE_FILE = os.path.join(DATABASE_DIR, "interactions.db")
 DATABASE_URL = f"sqlite:///{DATABASE_FILE}" # URL pour SQLAlchemy
